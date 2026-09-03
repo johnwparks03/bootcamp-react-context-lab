@@ -1,0 +1,11 @@
+.UserCard {
+  width: 30%;
+  border: 2px solid rgb(192, 19, 192);
+  border-radius: 5px;
+  align-self: center;
+}
+
+.UserProfile {
+  display: flex;
+  flex-direction: column;
+}

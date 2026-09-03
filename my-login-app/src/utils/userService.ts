@@ -1,5 +1,5 @@
 import tokenService from "./tokenService";
-import type { User } from "../shared.types";
+import type { RandomUser, RandomUserApiResult, User } from "../shared.types";
 import axios from "axios";
 
 const BASE_URL = "/api/auth/";
@@ -59,10 +59,36 @@ async function getUsers(): Promise<User[]> {
   }
 }
 
+function transformRandomUser(
+  randomUserApiResult: RandomUserApiResult,
+): RandomUser {
+  return {
+    name: `${randomUserApiResult.name.title} ${randomUserApiResult.name.first} ${randomUserApiResult.name.last}`,
+    email: randomUserApiResult.email,
+    picture: randomUserApiResult.picture.large,
+  };
+}
+
+async function getRandomUser(): Promise<RandomUser> {
+  try {
+    const res = await axios.get("https://randomuser.me/api/", {
+      headers: {
+        Authorization: `Bearer ${tokenService.getToken()}`,
+      },
+    });
+    console.log(`Random User: ${res.data}`);
+    return transformRandomUser(res.data.results[0]);
+  } catch (err) {
+    console.log("err", "this is error", err);
+    throw new Error("Failed to return random user!");
+  }
+}
+
 export default {
   signup,
   getUser,
   logout,
   login,
   getUsers,
+  getRandomUser,
 };

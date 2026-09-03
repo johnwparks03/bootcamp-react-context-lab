@@ -2,13 +2,17 @@ import { useEffect, useState } from "react";
 import type { User } from "../../shared.types";
 import userService from "../../utils/userService";
 import "./Users.css";
+import { useUser } from "../../contexts/UserContext";
+import { useNavigate } from "react-router-dom";
 
-type UsersProps = {
-  user: User;
-};
+// type UsersProps = {
+//   user: User;
+// };
 
-export default function Users(props: UsersProps) {
+export default function Users() {
   const [users, setUsers] = useState<User[]>([]);
+  const { user, handleLogout } = useUser();
+  const navigate = useNavigate();
 
   useEffect(() => {
     async function loadUsers() {
@@ -23,19 +27,22 @@ export default function Users(props: UsersProps) {
     void loadUsers();
   }, []);
 
-  return (
-    <>
-      <h1>Home Page</h1>
-      <h2>Welcome {props.user.email}</h2>
-      <ul>
-        {users.map((currentUser, index) => {
-          return (
-            <li>
-              User {index + 1}: {currentUser.email}
-            </li>
-          );
-        })}
-      </ul>
-    </>
-  );
+  if (!user) {
+    navigate("/login");
+  } else {
+    return (
+      <>
+        <h2>Users</h2>
+        <ul>
+          {users.map((currentUser, index) => {
+            return (
+              <li>
+                User {index + 1}: {currentUser.email}
+              </li>
+            );
+          })}
+        </ul>
+      </>
+    );
+  }
 }

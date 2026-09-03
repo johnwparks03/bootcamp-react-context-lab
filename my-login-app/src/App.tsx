@@ -8,6 +8,9 @@ import type { User } from "./shared.types";
 import userService from "./utils/userService";
 import NavBar from "./components/NavBar/NavBar";
 import Users from "./components/Users/Users";
+import { UserProvider } from "./contexts/UserContext";
+import UserProfile from "./components/UserProfile/UserProfile";
+import ThemeProvider from "./contexts/ThemeContext";
 
 function App() {
   const navigate = useNavigate();
@@ -24,7 +27,7 @@ function App() {
   async function handleLogout() {
     try {
       await userService.logout();
-      setUser(userService.getUser());
+      setUser(null);
       navigate("/");
     } catch (err) {
       console.log(err);
@@ -33,9 +36,29 @@ function App() {
 
   if (!user) {
     return (
-      <>
-        <NavBar user={null} handleLogout={handleLogout}></NavBar>
+        <UserProvider user={user} handleLogout={handleLogout}>
+          <NavBar></NavBar>
+          <Routes>
+            <Route
+              path="/login"
+              element={<LoginPage handleSignUpOrLogin={handleSignUpOrLogin} />}
+            />
+            <Route
+              path="/signup"
+              element={<SignUpPage handleSignUpOrLogin={handleSignUpOrLogin} />}
+            />
+            <Route path="*" element={<Navigate to="/login" />} />
+          </Routes>
+        </UserProvider>
+    );
+  }
+
+  return (
+      <UserProvider user={user} handleLogout={handleLogout}>
+        <NavBar></NavBar>
         <Routes>
+          <Route path="/" element={<UserProfile></UserProfile>} />
+          <Route path="/users" element={<Users></Users>}></Route>
           <Route
             path="/login"
             element={<LoginPage handleSignUpOrLogin={handleSignUpOrLogin} />}
@@ -44,27 +67,8 @@ function App() {
             path="/signup"
             element={<SignUpPage handleSignUpOrLogin={handleSignUpOrLogin} />}
           />
-          <Route path="*" element={<Navigate to="/login" />} />
         </Routes>
-      </>
-    );
-  }
-
-  return (
-    <>
-      <NavBar user={user} handleLogout={handleLogout}></NavBar>
-      <Routes>
-        <Route path="/" element={<Users user={user}></Users>} />
-        <Route
-          path="/login"
-          element={<LoginPage handleSignUpOrLogin={handleSignUpOrLogin} />}
-        />
-        <Route
-          path="/signup"
-          element={<SignUpPage handleSignUpOrLogin={handleSignUpOrLogin} />}
-        />
-      </Routes>
-    </>
+      </UserProvider>
   );
 }
 
