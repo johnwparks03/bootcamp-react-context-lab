@@ -23,3 +23,5 @@ export type RandomUserApiResult = {
     small: string;
   };
 };
+
+export type Theme = "light" | "dark";

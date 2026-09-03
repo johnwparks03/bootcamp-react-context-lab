@@ -3,12 +3,25 @@
   list-style: none;
 }
 
+.NavBar > :last-child {
+  margin-left: auto;
+}
+
 .NavBar > li {
   padding: 5px;
   font-weight: bold;
 }
 
-.NavBar > li > *{
-    color: rgb(149, 0, 255);
-    text-decoration: none;
+.NavBar > li > * {
+  color: rgb(149, 0, 255);
+  text-decoration: none;
+}
+
+button {
+  background-color: transparent;
+  font-weight: bold;
+  font-size: large;
+  border: 2px solid rgb(149, 0, 255);
+  border-radius: 5px;
+  cursor: pointer;
 }

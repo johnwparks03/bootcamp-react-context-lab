@@ -1,10 +1,11 @@
 import { type ReactNode, createContext, useContext, useState } from "react";
 import { useEffect } from "react";
-
-type ThemeType = "light" | "dark";
+import type { Theme } from "../shared.types";
+import themeService from "../utils/themeService";
+import tokenService from "../utils/tokenService";
 
 type ThemeContextType = {
-  theme: ThemeType;
+  theme: Theme;
   toggleTheme: () => void;
 };
 
@@ -14,20 +15,28 @@ export const ThemeContext = createContext<ThemeContextType | undefined>(
 
 type ThemeProviderProps = {
   children: ReactNode;
-  theme: ThemeType;
+  theme: Theme;
 };
 
 export default function ThemeProvider({
   children,
 }: ThemeProviderProps): ReactNode {
-  const [theme, setTheme] = useState<ThemeType>("light");
+  const storageTheme = themeService.getLocalstorageTheme();
+
+  const initTheme: Theme = storageTheme ?? "light";
+
+  const [theme, setTheme] = useState<Theme>(initTheme);
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
   }, [theme]);
 
   function toggleTheme() {
-    setTheme((currentTheme) => (currentTheme === "light" ? "dark" : "light"));
+    setTheme((currentTheme) => {
+      const newTheme = currentTheme === "light" ? "dark" : "light";
+      themeService.setLocalStorageTheme(newTheme);
+      return newTheme;
+    });
   }
 
   return (
